@@ -12,6 +12,7 @@ def main():
     ok = True
     for filepath in get_modified_files():
         ok = ok and check_with_pyflakes(filepath)
+        ok = ok and check_python_syntax(filepath)
 
     if ok:
         sys.exit(0)
@@ -32,6 +33,19 @@ def check_with_pyflakes(filepath):
             print message
         if w.messages:
             return False
+    return True
+
+def check_python_syntax(filepath):
+    """
+    Checks Python code for tabs and trailing spaces.
+    """
+    code = open(filepath).read()
+    if '\t' in code:
+        print '%s contains tabs.' % filepath
+        return False
+    elif ' \n' in code:
+        print '%s contains trailing spaces.' % filepath
+        return False
     return True
 
 def get_modified_files():
