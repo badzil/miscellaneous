@@ -1,1 +1,44 @@
-../ads/.git/hooks/pre-commit
+#!/usr/bin/env python
+
+import compiler
+import os
+import pyflakes
+import sys
+
+def main():
+    """
+    Checks your git commit with PyFlakes.
+    """
+    ok = True
+    for filepath in get_modified_files():
+        ok = ok and check_with_pyflakes(filepath)
+
+    if ok:
+        sys.exit(0)
+    else:
+        print >> sys.stderr, 'Commit refused.'
+        sys.exit(1)
+
+def check_with_pyflakes(filepath):
+    try:
+        tree = compiler.parseFile(filepath)
+    except (SyntaxError, IndentationError):
+        print >> sys.stderr, "%s: Pyflakes error." % filepath
+        return False
+    else:
+        w = pyflakes.Checker(tree, filepath)
+        w.messages.sort(lambda a, b: cmp(a.lineno, b.lineno))
+        for message in w.messages:
+            print message
+        if w.messages:
+            return False
+    return True
+
+def get_modified_files():
+    for line in os.popen('git status'):
+        if line.startswith('#\tmodified:   '):
+            modified_file = line.replace('#\tmodified:', '').strip()
+            yield modified_file
+
+if __name__ == '__main__':
+    main()
