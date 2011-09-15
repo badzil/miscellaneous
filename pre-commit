@@ -1,10 +1,7 @@
-#!/usr/bin/python2.6
-
-__requires__ = 'pyflakes==0.4.0'
+#!/usr/bin/env python
 
 import compiler
 import os
-import pyflakes.checker
 import sys
 
 def main():
@@ -13,6 +10,7 @@ def main():
     """
     ok = True
     for filepath in get_modified_files():
+        print filepath
         ok = ok and check_with_pyflakes(filepath)
         ok = ok and check_python_syntax(filepath)
 
@@ -23,22 +21,13 @@ def main():
         sys.exit(1)
 
 def check_with_pyflakes(filepath):
-    try:
-        tree = compiler.parseFile(filepath)
-    except (SyntaxError, IndentationError):
-        print >> sys.stderr, "%s: Pyflakes error." % filepath
-        return False
-    else:
-        w = pyflakes.checker.Checker(tree, filepath)
-        w.messages.sort(lambda a, b: cmp(a.lineno, b.lineno))
-        ok = True
-        for message in w.messages:
-            if 'redefinition of unused' not in message.message:
-                print message
-                ok = False
-        if not ok:
-            return False
-    return True
+    ok = True
+    print 'pyflakes %s' % filepath
+    for line in os.popen('pyflakes %s' % filepath):
+        if 'redefinition of unused' not in message.message:
+            print message
+            ok = False
+    return ok
 
 def check_python_syntax(filepath):
     """
@@ -57,7 +46,8 @@ def get_modified_files():
     for line in os.popen('git status'):
         if line.startswith('#\tmodified:   '):
             modified_file = line.replace('#\tmodified:', '').strip()
-            yield modified_file
+            if modified_file.endswith('.py'):
+                yield modified_file
         elif line == '# Changes not staged for commit:\n':
             break
 
