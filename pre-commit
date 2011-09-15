@@ -9,20 +9,25 @@ def main():
     """
     ok = True
     for filepath in get_modified_files():
-        print filepath
         ok = ok and check_with_pyflakes(filepath)
         ok = ok and check_python_syntax(filepath)
 
     if ok:
-        print >> sys.stderr, 'Commit has been verified.'
+        print >> sys.stderr, 'The commit has been verified.'
         sys.exit(0)
     else:
-        print >> sys.stderr, 'Commit refused.'
+        print >> sys.stderr, 'The commit contains errors.'
         sys.exit(1)
+#       answer = raw_input('Commit anyway? [N/y] ')
+#       if answer.strip()[0].lower() == 'y':
+#           print >> sys.stderr, 'Committing anyway.'
+#           sys.exit(0)
+#       else:
+#           print >> sys.stderr, 'Commit aborted.'
+#           sys.exit(1)
 
 def check_with_pyflakes(filepath):
     ok = True
-    print 'pyflakes %s' % filepath
     for line in os.popen('pyflakes %s' % filepath):
         if 'redefinition of unused' not in line:
             print line.strip()
