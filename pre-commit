@@ -3,6 +3,9 @@
 """
 This pre-commit hook for Git checks modified Python modules with Pyflakes and
 searches for trailing spaces or tabs.
+
+Thanks to unutbu (http://stackoverflow.com/users/190597/unutbu) for the answer
+to this question: http://bit.ly/ph97P1
 """
 
 __author__ = "Benoit Thiell"
@@ -26,15 +29,14 @@ def main():
         print >> sys.stderr, 'The commit has been verified.'
         sys.exit(0)
     else:
-        print >> sys.stderr, 'The commit contains errors.'
-        sys.exit(1)
-#       answer = raw_input('Commit anyway? [N/y] ')
-#       if answer.strip()[0].lower() == 'y':
-#           print >> sys.stderr, 'Committing anyway.'
-#           sys.exit(0)
-#       else:
-#           print >> sys.stderr, 'Commit aborted.'
-#           sys.exit(1)
+        sys.stdin = open('/dev/tty')
+        answer = raw_input('Commit anyway? [N/y] ')
+        if answer.strip()[0].lower() == 'y':
+            print >> sys.stderr, 'Committing anyway.'
+            sys.exit(0)
+        else:
+            print >> sys.stderr, 'Commit aborted.'
+            sys.exit(1)
 
 def check_with_pyflakes(filepath):
     ok = True
