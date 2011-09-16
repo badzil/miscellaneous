@@ -39,6 +39,10 @@ def main():
             sys.exit(1)
 
 def check_with_pyflakes(filepath):
+    """
+    Checks a Python file with pyflakes. Ignores the 'redefinition of unused'
+    modules messages as those are often false-positives.
+    """
     ok = True
     for line in os.popen('pyflakes %s' % filepath):
         if 'redefinition of unused' not in line:
@@ -60,6 +64,9 @@ def check_python_syntax(filepath):
     return True
 
 def get_modified_files():
+    """
+    Returns an iterator on the list of modified files.
+    """
     for line in os.popen('git status'):
         if line.startswith('#\tmodified:   '):
             modified_file = line.replace('#\tmodified:', '').strip()
