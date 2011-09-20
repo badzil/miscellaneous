@@ -1,0 +1,17 @@
+[user]
+    name = Benoit Thiell
+    email = bthiell@cfa.harvard.edu
+[alias]
+    s = status
+    p = pull
+    b = branch
+    co = checkout
+    a = add
+    ci = commit
+    l = log
+    r = rebase
+    d = diff
+[color]
+    ui = auto
+[core]
+	excludesfile = /home/bthiell/.gitignore
