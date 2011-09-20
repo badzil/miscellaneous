@@ -31,7 +31,7 @@ def main():
     else:
         sys.stdin = open('/dev/tty')
         answer = raw_input('Commit anyway? [N/y] ')
-        if answer.strip()[0].lower() == 'y':
+        if answer.strip().lower().startswith('y'):
             print >> sys.stderr, 'Committing anyway.'
             sys.exit(0)
         else:
